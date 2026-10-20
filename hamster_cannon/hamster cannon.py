@@ -10,7 +10,7 @@ pygame.font.init()
 # 視窗與顏色設定
 WIDTH, HEIGHT = 900, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("倉鼠發射葵花籽 - 雙人對戰版 (指定路徑)")
+pygame.display.set_caption("倉鼠發射葵花籽 - 雙人對戰版")
 
 WHITE  = (255, 255, 255)
 BLACK  = (0, 0, 0)
@@ -25,14 +25,15 @@ FONT = pygame.font.SysFont("microsoftjhenghei", 18, bold=True)
 CLOCK = pygame.time.Clock()
 FPS = 60
 
-# 2. 定義指定的素材資料夾路徑
-TARGET_ASSETS_DIR = r"C:\Users\user\Desktop\AI學習第一課\hamster_assets"
+# 2. 自動定位跟 .py 檔同一資料夾下的 hamster_assets 資料夾
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+TARGET_ASSETS_DIR = os.path.join(CURRENT_DIR, "hamster_assets")
 
 def load_image_fuzzy(target_keywords, size, fallback_color):
-    """在指定資料夾搜尋含有關鍵字的圖片，若無則生成備用圖示"""
+    """在同目錄下的 hamster_assets 資料夾搜尋含有關鍵字的圖片，若無則生成備用圖示"""
     valid_exts = ('.png', '.jpg', '.jpeg', '.bmp', '.webp')
     
-    # 檢查指定資料夾是否存在
+    # 檢查 hamster_assets 資料夾是否存在
     if os.path.exists(TARGET_ASSETS_DIR):
         for file in os.listdir(TARGET_ASSETS_DIR):
             if file.lower().endswith(valid_exts):
@@ -46,14 +47,14 @@ def load_image_fuzzy(target_keywords, size, fallback_color):
                         except Exception as e:
                             print(f"載入 {file} 失敗: {e}")
     else:
-        print(f"提示: 未找到指定資料夾 '{TARGET_ASSETS_DIR}'，使用備用圖形運行。")
+        print(f"提示: 未找到同目錄下的資料夾 '{TARGET_ASSETS_DIR}'，使用備用圖形運行。")
     
     # 備用圖示 (當資料夾找不到圖片時)
     surf = pygame.Surface(size, pygame.SRCALPHA)
     pygame.draw.ellipse(surf, fallback_color, (0, 0, size[0], size[1]))
     return surf
 
-# 載入指定的倉鼠與葵花籽圖片，並建立右側翻轉倉鼠
+# 載入同目錄下的倉鼠與葵花籽圖片，並建立右側翻轉倉鼠
 HAMSTER_LEFT_IMG  = load_image_fuzzy(["hamster", "倉鼠", "鼠"], (70, 70), (220, 160, 100))
 HAMSTER_RIGHT_IMG = pygame.transform.flip(HAMSTER_LEFT_IMG, True, False)  # 水平翻轉朝左
 SEED_IMG          = load_image_fuzzy(["seed", "sunflower", "葵花籽", "種子"], (24, 24), (80, 50, 20))
@@ -302,7 +303,7 @@ def main():
         # 勝負判定顯示
         if player1.hp <= 0 or player2.hp <= 0:
             winner = "倉鼠 2 號 (右)" if player1.hp <= 0 else "倉鼠 1 號 (左)"
-            win_text = FONT.render(f"🎉 {winner} 獲獲勝！遊戲結束 🎉", True, RED)
+            win_text = FONT.render(f"🎉 {winner} 獲勝！遊戲結束 🎉", True, RED)
             screen.blit(win_text, (WIDTH // 2 - 130, HEIGHT // 2 - 20))
 
         pygame.display.flip()
